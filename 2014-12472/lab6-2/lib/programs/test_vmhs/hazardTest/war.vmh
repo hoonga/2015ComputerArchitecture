@@ -1,0 +1,24 @@
+//  Original Code
+//  @000
+//  irmovl 9, %eax
+//  irmovl 9,  %ebx
+//  irmovl 7, %edi
+//  addl %eax, %edi
+//  subl %ebx, %eax
+//  mtc0 eax, f
+
+// 30f009000000
+// 30f309000000
+// 30f707000000
+// 6007
+// 6130
+// c00f
+
+//Dumped Result
+@000
+30f00900
+000030f3
+09000000
+30f70700
+00006007
+6130c00e

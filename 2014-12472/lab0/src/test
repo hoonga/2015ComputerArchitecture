@@ -1,0 +1,9 @@
+#!/bin/sh
+
+if [ "$1" = "hihohiho" -o "$1" = "hihihoho" -o "$1" = "hello" ];
+then
+	../build/"test_$1"
+else
+	echo "usage: test [type]"
+	echo "	type - hello / hihihoho / hihohiho"
+fi

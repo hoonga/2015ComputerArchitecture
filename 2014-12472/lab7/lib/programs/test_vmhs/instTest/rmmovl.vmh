@@ -1,0 +1,31 @@
+// Original Program
+//@000		    //  .init
+//30f103000000  //	irmovl	$3	   , %ecx   # ecx = 3
+//30f2fdffffff  //  irmovl  $-3	   , %edx   # edx = -3
+//30f400010000	//  irmovl  array  , %esp   # esp = array
+//401400000000	//  rmmovl  %ecx   , (%esp) # array[0] = 3 
+//402404000000	//  rmmovl  %edx   ,4(%esp) # array[1] = -3
+//500400000000	//  mrmovl  (%esp) , %eax   # eax = array[0]
+//501404000000	//  mrmovl 4(%esp) , %ecx   # ecx = array[1]
+//6010			//  addl     %ecx  , %eax   # eax = ecx + eax = 0
+//c00e			//  mtc0     %eax  , $14	# check result.
+
+
+// Dumped Result
+@000
+30f10300
+000030f2
+fdffffff
+30f40001
+00004014
+00000000
+40240400
+00005004
+00000000
+50140400
+00006010
+c00e0000
+
+
+
+

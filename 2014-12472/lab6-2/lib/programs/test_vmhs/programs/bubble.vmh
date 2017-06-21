@@ -1,0 +1,182 @@
+//bubble sort
+//# Execution begins at address 0
+
+//@000					//init: @ address 0			#
+//0//30f400030000		//		irmovl Stack, %esp  	# Set up Stack pointer  
+//6//30f500030000		//		irmovl Stack, %ebp  	# Set up base pointer   
+//12//7064000000		//		jmp Main				# Execute main program
+//17// 
+
+
+
+//# Array of 6 elements
+
+//.align 4 	
+//@00d					//array: @ address 52
+//52//dddd				//	.long 0xdddd		# These values should get sorted
+//56//eeee				//	.long 0xeeee
+//60//bbbb				//	.long 0xbbbb
+//64//aaaa				//  .long 0xaaaa
+//68//ffff				//  .long 0xffff
+//72//cccc				//  .long 0xcccc
+//76//0101				//  .long 0x0101		# This value should not change
+
+
+//@019 					// Main: @ address 100
+//100//30f006000000		//		irmovl $6,%eax	
+//106//a00f				//		pushl %eax			# Push 6
+//108//30f234000000		//		irmovl array,%edx
+//114//a02f				//		pushl %edx      	# Push array
+//116//80c8000000		//		call Bubble			# Bubble(array, 6)
+			//121//b03f				//		popl %ebx			# ebx = array
+//121//30f334000000					//		irmovl array, %ebx
+//127//30f001000000		//		irmovl $1, %eax
+//133//30f104000000		//		irmovl $4, %ecx
+//139//30f205000000		//		irmovl $5, %edx
+//							resultCheck :
+//145//507300000000		//		mrmovl 	(%ebx), %edi	# edi = a[i]
+//151//506304000000		//		mrmovl 4(%ebx), %esi	# esi = a[i+1]
+//157//6167				//		subl	%esi, %edi		# a[i+1] - a[i]
+//159//76b3000000		//		jmpG	fin				# if order is reversed, go fail routine
+//164//6013				//		addl 	%ecx, %ebx  	# i++
+//166//6102				//		subl	%eax, %edx  	# count--
+//168//7691000000		//		jmpG	resultCheck 	# if(!count <= 0) goto resultCheck
+//							Passed :
+//173//30f000000000		//		irmovl $0, %eax
+//							fin :
+//179//c00e				//		mtc0  $eax, 0xe
+
+
+
+								
+//# void Bubble(int *data, int count)
+
+//@032					// Bubble: @ address 200
+//200//a05f				//			pushl %ebp
+//202//2045				//			rrmovl %esp,%ebp
+//204//a03f				//			pushl %ebx				# Save registers
+//206//a06f				//			pushl %esi
+//208//a07f				//			pushl %edi
+//210//501508000000		//			mrmovl 8(%ebp),%ecx 	# ecx = data (== array??)
+//216//50050c000000		//			mrmovl 12(%ebp),%eax	# edx = count
+//222//6000				//			addl %eax,%eax
+//224//6000				//			addl %eax,%eax			# 4*count
+//226//6010				//			addl %ecx,%eax			# eax = p_end
+//228//a00f				//			pushl %eax				# Store p_end at (%esp)
+//230//30f204000000		//			irmovl $4, %edx
+//236//6012				//			addl %ecx,%edx			# edx = p_next
+//238//6120				//			subl %edx,%eax			# p_end - p_next
+	//240//7146010000		//			jle Done				# if(p_end - p_next<=0) goto done
+//245//2023				// Loop1:	rrmovl %edx,%ebx		# 
+//247//30f004000000		//			irmovl $4,%eax
+//253//6103				//			subl %eax,%ebx			# p = p_next-1 ( p == current)
+//255//507300000000		// Loop2:	mrmovl (%ebx),%edi		# r = *p
+//261//506304000000		//			mrmovl 4(%ebx),%esi		# s = *(p+1)
+//267//2060				//			rrmovl %esi,%eax
+
+//  $begin bubble-r-swap-ys
+//269//6170				//			subl %edi,%eax			# s-r
+	//271//7520010000		//			jge Skip				# Skip if s >= r
+						//									# swap
+//276//406300000000		//			rmmovl %esi,(%ebx)		# *p = s
+//282//407304000000		//			rmmovl %edi,4(%ebx)		# *(p+1) = r
+// 	$end bubble-r-swap-ys
+//						//	Skip:
+//288//30f004000000		//			irmovl $4,%eax
+//294//6103				//			subl %eax,%ebx		# p--
+//296//2030				//			rrmovl %ebx,%eax
+//298//6110				//			subl %ecx,%eax		# p - data
+	//300//75ff000000		//			jge Loop2
+//305//30f004000000		//			irmovl $4,%eax
+//311//6002				//			addl %eax,%edx		# p_next++
+//313//500400000000				//			mrmovl (%esp),%eax      # p_end
+//319//6120				//			subl %edx,%eax		# p_end - p_next
+	//321//76f5000000		//			jg Loop1
+						//	Done:
+//326//b00f				//			popl %eax		# Deallocate stack space
+//328//b07f				//			popl %edi		# Restore registers
+//330//b06f				//			popl %esi
+//332//b03f				//			popl %ebx
+//334//2054				//			rrmovl %ebp,%esp
+//336//b05f				//			popl %ebp
+//338//90				//			ret
+//339//
+						//	.pos 0x300	= address 768
+//Stack:	# The stack goes here and grows to lower addresses
+//* $end bubble-r-solve-ys */
+
+@000
+30f30003
+000030f5
+00030000
+70640000
+00000000
+
+@00d
+dddd0000
+eeee0000
+bbbb0000
+aaaa0000
+ffff0000
+cccc0000
+01010000
+
+@019
+30f00600
+0000a00f
+30f23400
+0000a02f
+80c80000
+0030f334
+00000030
+f0010000
+0030f104
+00000030
+f2050000
+00507300
+00000050
+63040000
+00616776
+b3000000
+60136102
+76910000
+0030f000
+000000c0
+0e000000
+
+@032
+a05f2045
+a03fa06f
+a07f5015
+08000000
+50050c00
+00006000
+60006010
+a00f30f2
+04000000
+60126120
+71460100
+00202330
+f0040000
+00610350
+73000000
+00506304
+00000020
+60617075
+20010000
+40630000
+00004073
+04000000
+30f00400
+00006103
+20306110
+75ff0000
+0030f004
+00000060
+02500400
+00000061
+2076f500
+0000b00f
+b07fb06f
+b03f2054
+b05f9000

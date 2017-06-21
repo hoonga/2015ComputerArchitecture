@@ -1,0 +1,34 @@
+//Original Code
+//@000		    //   .init
+//30f400010000	//  irmovl  array  , %esp   # esp = array
+//500400000000	//  mrmovl  (%esp) , %eax   # eax = array[0]
+//501404000000	//  mrmovl 4(%esp) , %ecx   # ecx = array[1]
+//502408000000	//  mrmovl 8(%esp) , %edx   # edx = array[2]
+//6012			//  addl     %ecx  , %edx   # edx = edx + ecx
+//6120			//  subl     %edx  , %eax   # eax = eax - edx 
+//c00e			//  mtc0     %eax  , $14	# check result.
+//00			//  halt
+
+
+//@040			// address = 256 -> index 0x40
+//0a000000		// .long 3
+//03000000		// .long 7
+//07000000		// .long 10
+
+
+
+//Dumped Result
+@000
+30f40001
+00005004
+00000000
+50140400
+00005024
+08000000
+60126120
+c00e0000
+
+@040
+0a000000
+03000000
+07000000

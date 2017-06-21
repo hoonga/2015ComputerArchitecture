@@ -1,0 +1,112 @@
+#!/bin/bash
+
+
+SRCPATH=./
+TESTHOME=../lib/programs/test_vmhs/
+DECODEDIR=$TESTHOME/decode/
+IMEMDIR=$TESTHOME/instTest/
+PROGDIR=$TESTHOME/programs/
+HAZRDIR=$TESTHOME/hazardTest/
+LOGDIR=./Log
+BUILDDIR=../build
+LIB=../lib
+
+function run_test {
+	cp $IMEMDIR/$1.vmh $SRCPATH/memory.vmh
+	mkdir -p $LOGDIR/$1
+	./bdir/sim > ./$LOGDIR/$1/simOut
+	rm memory.vmh
+}
+
+function run_prog {
+	cp $PROGDIR/$1.vmh $SRCPATH/memory.vmh
+	mkdir -p $LOGDIR/$1
+	./bdir/sim > ./$LOGDIR/$1/simOut
+	rm memory.vmh
+}
+
+function run_hazard {
+	cp $HAZRDIR/$1.vmh $SRCPATH/memory.vmh
+	mkdir -p $LOGDIR/$1
+	./bdir/sim > ./$LOGDIR/$1/simOut
+	rm memory.vmh
+}
+
+function clean {
+	rm -rf $BUILDDIR
+	rm -rf $LOGDIR
+	rm -rf ./bdir
+	rm -rf ./build
+	rm -f ./sim.so
+	rm -f ./sim
+}	
+
+
+function compile {
+
+	mkdir -p $BUILDDIR
+	mkdir -p $BUILDDIR/bdir
+	mkdir -p ./bdir
+	bsc -u -sim -aggressive-conditions -no-warn-action-shadowing -p +:$LIB/common-lib -simdir $BUILDDIR/bdir -info-dir $BUILDDIR/bdir -bdir $BUILDDIR/bdir $LIB/common-lib/TestBench.bsv
+	bsc -u -sim -e mkTestBench -bdir $BUILDDIR/bdir -info-dir $BUILDDIR/bdir -simdir $BUILDDIR/bdir -o sim $BUILDDIR/bdir/*.ba
+	mv sim bdir
+	mv sim.so bdir
+}
+
+function testall {
+	echo "Running Test programs..."
+
+	echo "Running asum..."
+	run_prog asum
+
+	echo " "
+	echo "Running Array32..."
+	run_prog asum1
+
+	echo " "
+	echo "Running Array_ij..."
+	run_prog asum_ij
+
+
+	echo " "
+	echo "Running Array_ji..."
+	run_prog asum_ji
+
+
+	echo " "
+	echo "Running bubble..."
+	run_prog bubble
+
+	echo " "
+	echo "Running fibonacci..."
+	run_prog fibonacci
+
+	echo " "
+	echo "Running htower..."
+	run_prog htower
+
+
+	rm -f memory.vmh
+}
+
+case "$1" in
+	-c) clean;
+		compile;;
+	-clean) clean;;
+	-r) testall;;
+	-o) run_prog $2;rm -f memory.vmh;;
+	-h|--help|*)  echo " ";
+				  echo "Usage : $0 [-c : compile all] [-clean : cleanup build files] [ -r : test all ] [ -o <test_name> : test specific one. test name list is below ]";
+				  echo " ";
+		  		  echo "  Program list";
+				  echo "   asum";
+				  echo "   asum1";
+				  echo "   asum_ij";
+				  echo "   asum_ji";
+				  echo "   bubble";
+				  echo "   fibonacci";
+				  echo "   htower";
+				  echo " ";
+esac
+
+

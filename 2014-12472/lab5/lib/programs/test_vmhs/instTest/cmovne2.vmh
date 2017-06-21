@@ -1,0 +1,19 @@
+//Original Code
+//@000		   	 //   .init
+//30f000000000   //   irmovl  $0   , %eax   # eax = 0
+//30f501000000   //   irmovl  $1   , %ebp   # ebp = 1
+//30f101000000   //	  irmovl	$1	 , %ecx   # ecx = 1
+//6151		     //   subl    %ebp , %ecx   # ecx = ebp - ecx = 0  
+//2450		     //   cmovne  %ebp , %eax   # eax = ebp =1  , if condition holds (should not hold)
+//c00e		     //   mtc0    %eax , $14    # check result.
+//00			 //   halt
+
+//Dumped Result
+@000
+30f00000
+000030f5
+01000000
+30f10100
+00006151
+2450c00e
+00000000

@@ -1,0 +1,18 @@
+#!/bin/sh
+
+binbase=../build/bindir/
+
+case "$1" in
+	"fold")
+		$binbase"simFold"
+		;;
+	"pipe")
+		$binbase"simPipe"
+		;;
+	"sfol")
+		$binbase"simSfol"
+		;;
+	*)
+		echo "usage: test [type]"
+		echo "	type - fold / pipe / sfol"
+esac

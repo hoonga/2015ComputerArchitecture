@@ -1,0 +1,55 @@
+#!/bin/bash
+
+INPUT=./memory.vmh
+TARGET1=memory0.vmh
+TARGET2=memory1.vmh
+TEMP=tmp
+#flag=0
+
+rm -f $TEMP
+rm -f $TARGET1
+rm -f $TARGET2
+
+echo 0 > $TEMP
+while read line
+do
+	read flag < $TEMP
+		echo $line |		
+		while read -n2 char
+		do
+			if [[ "$char" == "@"* ]]
+			then
+				#save first two character; @[0-9]
+				echo -n "$char" >> $TARGET1
+				echo -n "$char" >> $TARGET2
+
+				read -n2 char #read rest
+				echo "$char" >> $TARGET1
+				echo "$char" >> $TARGET2
+				
+				echo 0 > $TEMP
+				
+				break
+
+			elif [[ "$char" != "/"* ]] || [[ "$char" != *"/" ]]
+			then #if it is not comment
+				if [ "$flag" == 0 ]
+				then
+					#odd position
+					echo -n "$char " >> $TARGET1
+					flag=1
+				else
+					#even position
+					echo -n "$char " >> $TARGET2
+					flag=0
+				fi
+			else #reached comment region
+				echo $flag > $TEMP
+				echo "" >> $TARGET1
+				echo "" >> $TARGET2
+				break
+			fi
+		done 
+done < $INPUT
+
+rm -f $TEMP

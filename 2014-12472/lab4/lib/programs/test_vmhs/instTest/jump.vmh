@@ -1,0 +1,25 @@
+//Original Code
+//@000		   	 //   .init
+//30f0ffffffff   //   irmovl  $-1  , %eax   # eax = -1
+//7050000000   //   jmp     dest		  # jumps to the dest
+//c00e		     //   mtc0    %eax , $14    # check result. (shold not execute this)
+//00			 //   halt
+
+//@014		     //   .dest (address = 80)
+//30f000000000   //   irmovl  $-1  , %eax   # eax = -1
+//c00e		     //   mtc0    %eax , $14    # check result.
+//00			 //   halt
+
+
+//Dumped Result
+@000
+30f0ffff
+ffff7050
+000000c0
+0e0000
+
+@014
+30f00000
+0000c00e
+00000000
+

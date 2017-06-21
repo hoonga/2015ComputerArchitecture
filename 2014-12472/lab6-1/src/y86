@@ -1,0 +1,181 @@
+#!/bin/bash
+
+SRCPATH=./
+TESTHOME=../lib/programs/test_vmhs/
+DECODEDIR=$TESTHOME/decode/
+IMEMDIR=$TESTHOME/instTest/
+PROGDIR=$TESTHOME/programs
+HAZRDIR=$TESTHOME/hazardTest/
+LOGDIR=./Log
+BUILDDIR=../build
+LIB=../lib
+
+function run_test {
+	cp $IMEMDIR/$1.vmh $SRCPATH/memory.vmh
+	mkdir -p $LOGDIR/$1
+	./bdir/sim > ./$LOGDIR/$1/simOut
+	rm memory.vmh
+}
+
+function run_prog {
+	cp $PROGDIR/$1.vmh $SRCPATH/memory.vmh
+	mkdir -p $LOGDIR/$1
+	./bdir/sim > ./$LOGDIR/$1/simOut
+	rm memory.vmh
+}
+
+function run_hazard {
+	cp $HAZRDIR/$1.vmh $SRCPATH/memory.vmh
+	mkdir -p $LOGDIR/$1
+	./bdir/sim > ./$LOGDIR/$1/simOut
+	rm memory.vmh
+}
+
+function clean {
+	rm -rf $BUILDDIR
+	rm -rf $LOGDIR
+	rm -f  decode_result
+	rm -rf ./bdir
+	rm -rf ./build
+	rm -rf ./Log
+	rm -f ./sim.so
+	rm -f ./sim
+}	
+
+
+function compile {
+
+	mkdir -p $BUILDDIR
+	mkdir -p $BUILDDIR/bdir
+	mkdir -p ./bdir
+	bsc -u -sim -aggressive-conditions -no-warn-action-shadowing -p +:$LIB/common-lib -simdir $BUILDDIR/bdir -info-dir $BUILDDIR/bdir -bdir $BUILDDIR/bdir $LIB/common-lib/TestBench.bsv
+	bsc -u -sim -e mkTestBench -bdir $BUILDDIR/bdir -info-dir $BUILDDIR/bdir -simdir $BUILDDIR/bdir -o sim $BUILDDIR/bdir/*.ba
+	mv sim bdir
+	mv sim.so bdir
+}
+
+function testall {
+	echo " "
+	echo "testing irmovl"
+	run_test irmovl
+
+	echo " "
+	echo "testing rrmovl"
+	run_test rrmovl
+
+	echo " "
+	echo "testing mrmovl"
+	run_test mrmovl
+
+	echo " "
+	echo "testing rmmovl"
+	run_test rmmovl
+	
+	echo " "
+	echo "testing addl"
+	run_test add
+
+	echo " "
+	echo "testing subl"
+	run_test sub
+
+	echo " "
+	echo "testing andl"
+	run_test and
+	
+	echo " "
+	echo "testing xorl"
+	run_test xor
+
+	echo " "
+	echo "testing cmovg"
+	run_test cmovg
+
+	echo " "
+	echo "testing cmovge"
+	run_test cmovge
+	run_test cmovge2
+
+	echo " "
+	echo "testing cmovl"
+	run_test cmovl
+
+	echo " "
+	echo "testing cmovle"
+	run_test cmovle
+	run_test cmovle2
+
+	echo " "
+	echo "testing cmovne"
+	run_test cmovne
+	run_test cmovne2
+
+#	echo "testing cmove"
+
+	echo " "
+	echo "testing jump"
+	run_test jump
+
+	echo " "
+	echo "testing push"
+	run_test push
+
+	echo " "
+	echo "testing pop"
+	run_test pop
+
+	echo " "
+	echo " "
+	echo "Running Hazard Checking..."
+
+	echo "testing control hazard"
+	run_hazard control_call
+
+	echo " "
+	echo " "
+	echo "Running Test programs..."
+
+	echo "Running Cjr..."
+	run_prog cjr
+
+	echo " "
+	echo "Running asum..."
+	run_prog asum
+
+	echo " "
+	echo "Running bubble..."
+	run_prog bubble
+
+	echo " "
+	echo "Running htower..."
+	run_prog htower
+
+	echo " "
+	echo "Running fibonacci..."
+	run_prog fibonacci
+
+
+	rm -f memory.vmh
+}
+
+case "$1" in
+	-c) clean;
+		compile;;
+	-clean) clean;;
+	-r) testall;;
+	-o) run_test $2;rm -f memory.vmh;;
+	-h|--help|*)  echo " ";
+				  echo "Usage : $0 [-c : compile all] [-clean : cleanup build files] [ -r : test all ] [ -o <test_name> : test specific one. test name list is below ]";
+				  echo " ";
+		  		  echo "  Test list(below one has dependency to upper one)";
+				  echo "   irmovl";
+				  echo "   rrmovl";
+				  echo "   mrmovl";
+				  echo "   rmmovl";
+				  echo "   [add, sub, and, xor]";
+				  echo "   [cmovg, cmovge(equal condition), cmovge2(greater condition), cmovl, cmovle(equal condition), cmovle2(less condition), cmovne, jump]";
+				  echo "   [push, pop]";
+				  echo " ";
+esac
+
+

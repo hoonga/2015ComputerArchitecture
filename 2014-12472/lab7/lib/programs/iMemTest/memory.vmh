@@ -1,0 +1,49 @@
+  @000             	// 	.pos 0 
+  30f400010000 		// init:	irmovl Stack, %esp  	# Set up stack pointer  
+  30f500010000 		// 		irmovl Stack, %ebp  	# Set up base pointer   
+  8024000000   		// 		call Main		# Execute main program
+  00           		// 		halt			# Terminate program 
+                   	// # Array of 4 elements
+  @00a             	// 	.align 4 	
+  0d000000     		// array:	.long d
+  c0000000     		// 		.long c0
+  000b0000     		// 		.long b00
+  00a00000     		// 		.long a000	
+                   	// 
+  a05f         		// Main:	pushl %ebp 
+  2045         		// 		rrmovl %esp,%ebp
+  30f004000000 		// 		irmovl $4,%eax	
+  a00f         		// 		pushl %eax		# Push 4
+  30f214000000 		// 		irmovl array,%edx
+  a02f         		// 		pushl %edx      	# Push array
+  8042000000   		// 		call Sum		# Sum(array, 4)
+  2054         		// 		rrmovl %ebp,%esp
+  b05f         		// 		popl %ebp
+  90           		// 		ret 
+                   	// 
+                   	//  $begin sum-ys 0 
+                   	// 	# int Sum(int *Start, int Count)
+  a05f         		// Sum:		pushl %ebp
+  2045         		// 		rrmovl %esp,%ebp
+  501508000000 		// 		mrmovl 8(%ebp),%ecx 	# ecx = Start
+  50250c000000 		// 		mrmovl 12(%ebp),%edx	# edx = Count
+  6300         		// 		xorl %eax,%eax		# sum = 0
+  6222         		// 		andl   %edx,%edx	# Set condition codes
+  7378000000   		// 		je     End
+  506100000000 		// Loop:	mrmovl (%ecx),%esi	# get *Start
+  6060         		// 		addl %esi,%eax          # add to sum
+  30f304000000 		// 		irmovl $4,%ebx          # 
+  6031         		// 		addl %ebx,%ecx          # Start++
+  30f3ffffffff 		// 		irmovl $-1,%ebx	        # 
+  6032         		// 		addl %ebx,%edx          # Count--
+  745b000000   		// 		jne    Loop             # Stop when 0
+  2054         		// End:		rrmovl %ebp,%esp
+  b05f         		// 		popl %ebp
+  90           		// 		ret
+                   	//  $end sum-ys 0 
+                   	// 
+                   	// # The stack starts here and grows to lower addresses
+  					// 	.pos 100		
+  					// Stack	 
+  					//  $end code-ysa 
+  					//  $end code-yso 

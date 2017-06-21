@@ -1,0 +1,20 @@
+//Original Code
+//@000		   	 //   .init
+//30f105000000   //	  irmovl	$5	 , %ecx   # ecx = 5
+//30f203000000   //	  irmovl 	$3	 , %edx   # edx = 3
+//6112		   	 //   subl   	%ecx , %edx   # edx = edx - ecx = -2
+//2020		   	 //   rrmovl  %edx , %eax   # eax = edx = -2
+//30f1feffffff   //   irmovl  $-4  , %ecx   # ecx = -2
+//6110		   	 //   subl    %ecx , %eax   # eax = eax - ecx = 0
+//c00e		     //   mtc0    %eax , $14    # check result.
+//00			 //   halt
+
+//Dumped Result
+@000
+30f10500
+000030f2
+03000000
+61122020
+30f1feff
+ffff6110
+c00e0000

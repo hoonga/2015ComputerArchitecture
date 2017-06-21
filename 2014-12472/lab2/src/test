@@ -1,0 +1,24 @@
+#!/bin/sh
+
+binbase=../build/bindir/
+
+case "$1" in
+	"left")
+		$binbase"simLeft"
+		;;
+	"lp")
+		$binbase"simLP"
+		;;
+	"rlp")
+		$binbase"simRLP"
+		;;
+	"rap")
+		$binbase"simRAP"
+		;;
+	"cycle")
+		$binbase"simCYCLE"
+		;;
+	*)
+		echo "usage: test {type}"
+		echo "	type - {left | lp | rlp | rap | cycle}"
+esac

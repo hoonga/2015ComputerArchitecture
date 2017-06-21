@@ -1,0 +1,9 @@
+//Original Codes
+//@000			//	.init
+//30f000000000	//	irmovl $0	, %eax 	# eax = 0
+//c00e			//  mtc0   %eax , $14  	# check result
+
+//Dumped result
+@000
+30f00000
+0000c00e
